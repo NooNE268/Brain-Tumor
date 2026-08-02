@@ -20,8 +20,15 @@ uploaded_file = st.file_uploader("Upload an MRI image...", type=["jpg", "png", "
 if uploaded_file is not None:
     img = Image.open(uploaded_file)
     st.image(img, caption="Uploaded MRI", use_container_width=True)
+    
+    # FIX: Convert the image to RGB to remove any Alpha channel (transparency)
+    # and ensure it has exactly 3 channels.
+    img = img.convert("RGB")
+    
     img = img.resize((224, 224))
     img_array = image.img_to_array(img)
+    
+    # Expand dims (1, 224, 224, 3) and normalize
     img_array = np.expand_dims(img_array, axis=0) / 255.0
 
     if st.button("Predict"):
